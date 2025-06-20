@@ -12,6 +12,7 @@ import { SearchResultsPage } from './pages/SearchResultsPage';
 import { BookingPage } from './pages/BookingPage';
 import { LoginPage } from './pages/LoginPage';
 import { LoyaltyPage } from './pages/LoyaltyPage';
+import { PromotionsPage } from './pages/PromotionsPage';
 import { AdminDashboard } from './pages/AdminDashboard';
 
 function App() {
@@ -57,6 +58,15 @@ function App() {
                 <Footer />
               </>
             } />
+            <Route path="/promotions" element={
+              <>
+                <Header />
+                <main className="flex-1">
+                  <PromotionsPage />
+                </main>
+                <Footer />
+              </>
+            } />
             <Route path="/loyalty" element={
               <>
                 <Header />
@@ -72,10 +82,36 @@ function App() {
                 <main className="flex-1 py-16">
                   <div className="container mx-auto px-4 text-center">
                     <h1 className="text-4xl font-bold text-azul-oscuro mb-8">Sobre NORTEEXPRESO</h1>
-                    <p className="text-xl text-gris-suave max-w-3xl mx-auto">
-                      Con más de 30 años de experiencia, somos la empresa líder en transporte interprovincial en el Perú. 
-                      Nuestro compromiso es brindar un servicio seguro, cómodo y puntual a todos nuestros pasajeros.
-                    </p>
+                    <div className="max-w-4xl mx-auto">
+                      <p className="text-xl text-gris-suave mb-8">
+                        Con más de 30 años de experiencia, somos la empresa líder especializada en conectar 
+                        Lima con las maravillas del norte del Perú. Nuestro compromiso es brindar un servicio 
+                        seguro, cómodo y puntual a todos nuestros pasajeros.
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                        <div className="bg-white p-6 rounded-xl shadow-lg">
+                          <h3 className="text-xl font-bold text-azul-oscuro mb-4">Nuestra Misión</h3>
+                          <p className="text-gris-suave">
+                            Conectar a las personas con los destinos más hermosos del norte peruano, 
+                            ofreciendo un servicio de transporte seguro y confortable.
+                          </p>
+                        </div>
+                        <div className="bg-white p-6 rounded-xl shadow-lg">
+                          <h3 className="text-xl font-bold text-azul-oscuro mb-4">Nuestra Visión</h3>
+                          <p className="text-gris-suave">
+                            Ser la empresa de transporte preferida para descubrir el norte del Perú, 
+                            reconocida por nuestra excelencia en el servicio.
+                          </p>
+                        </div>
+                        <div className="bg-white p-6 rounded-xl shadow-lg">
+                          <h3 className="text-xl font-bold text-azul-oscuro mb-4">Nuestros Valores</h3>
+                          <p className="text-gris-suave">
+                            Seguridad, puntualidad, comodidad y compromiso con la satisfacción 
+                            de nuestros pasajeros en cada viaje.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </main>
                 <Footer />
@@ -95,10 +131,12 @@ function App() {
                         <div className="bg-white p-6 rounded-lg shadow-lg">
                           <h3 className="text-xl font-semibold text-azul-oscuro mb-4">Teléfono</h3>
                           <p className="text-gris-suave">+51 1 234-5678</p>
+                          <p className="text-sm text-gris-suave mt-2">Atención 24/7</p>
                         </div>
                         <div className="bg-white p-6 rounded-lg shadow-lg">
                           <h3 className="text-xl font-semibold text-azul-oscuro mb-4">Email</h3>
                           <p className="text-gris-suave">info@norteexpreso.com</p>
+                          <p className="text-sm text-gris-suave mt-2">Respuesta en 24h</p>
                         </div>
                       </div>
                     </div>
@@ -130,7 +168,8 @@ function App() {
                         ¡Reserva Confirmada!
                       </h1>
                       <p className="text-xl text-gris-suave mb-8">
-                        Tu pasaje ha sido reservado exitosamente. Recibirás un email con los detalles de tu viaje.
+                        Tu pasaje al norte del Perú ha sido reservado exitosamente. 
+                        Recibirás un email con los detalles de tu viaje.
                       </p>
                       <button
                         onClick={() => window.location.href = '/'}

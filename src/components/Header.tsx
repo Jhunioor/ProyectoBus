@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, LogOut, Menu, X } from 'lucide-react';
+import { User, LogOut, Menu, X, Compass } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 
@@ -20,12 +20,13 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-            <img 
-              src="/logo.png" 
-              alt="NORTEEXPRESO" 
-              className="h-10 w-auto"
-            />
-            <span className="text-xl font-bold">NORTEEXPRESO</span>
+            <div className="w-10 h-10 bg-amarillo-dorado rounded-full flex items-center justify-center">
+              <Compass className="h-6 w-6 text-azul-oscuro" />
+            </div>
+            <div>
+              <span className="text-xl font-bold">NORTEEXPRESO</span>
+              <div className="text-xs text-amarillo-dorado">Especialistas en el Norte</div>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -35,6 +36,10 @@ export function Header() {
             </Link>
             <Link to="/search" className="hover:text-amarillo-dorado transition-colors">
               Buscar Viajes
+            </Link>
+            <Link to="/promotions" className="hover:text-amarillo-dorado transition-colors relative">
+              Promociones
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-2 h-2"></span>
             </Link>
             <Link to="/loyalty" className="hover:text-amarillo-dorado transition-colors">
               Programa Fidelidad
@@ -102,6 +107,14 @@ export function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Buscar Viajes
+              </Link>
+              <Link
+                to="/promotions"
+                className="py-2 hover:text-amarillo-dorado transition-colors flex items-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Promociones
+                <span className="ml-2 bg-red-500 text-white text-xs rounded-full w-2 h-2"></span>
               </Link>
               <Link
                 to="/loyalty"

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Clock, MapPin, Users, CreditCard } from 'lucide-react';
+import { Clock, MapPin, Users, CreditCard, Star, Gift } from 'lucide-react';
 import { SearchFilters, Viaje } from '../types';
+import { Promotion } from '../data/promotions';
+import { getRouteByOriginDestination } from '../data/routes';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -11,6 +13,7 @@ export function SearchResultsPage() {
   const [viajes, setViajes] = useState<Viaje[]>([]);
   const [loading, setLoading] = useState(true);
   const filters = location.state?.filters as SearchFilters;
+  const selectedPromotion = location.state?.selectedPromotion as Promotion;
 
   useEffect(() => {
     if (!filters) {
@@ -18,35 +21,43 @@ export function SearchResultsPage() {
       return;
     }
 
-    // Simulación de búsqueda - en producción se conectaría a la API
+    // Simulación de búsqueda con datos del norte del Perú
     setTimeout(() => {
+      const routeData = getRouteByOriginDestination(filters.origen, filters.destino);
+      
+      if (!routeData) {
+        setViajes([]);
+        setLoading(false);
+        return;
+      }
+
       const mockViajes: Viaje[] = [
         {
           codigo: 1,
-          fecha_hora_salida: `${filters.fecha}T08:00:00`,
-          fecha_hora_llegada_estimada: `${filters.fecha}T16:00:00`,
+          fecha_hora_salida: `${filters.fecha}T06:00:00`,
+          fecha_hora_llegada_estimada: `${filters.fecha}T${String(6 + routeData.duracion_horas).padStart(2, '0')}:00:00`,
           estado: 'Programado',
           ruta: {
-            codigo: 1,
+            codigo: routeData.codigo,
             origen: filters.origen,
             destino: filters.destino,
-            costo_referencial: 45.00
+            costo_referencial: selectedPromotion ? selectedPromotion.discountedPrice : routeData.costo_referencial
           },
           bus: {
             codigo: 1,
-            placa: 'ABC-123',
+            placa: 'NTE-001',
             fabricante: 'Mercedes Benz',
             num_asientos: 40,
             estado: 'Operativo'
           },
           chofer: {
             codigo: 1,
-            nombre: 'Juan',
-            apellidos: 'Pérez',
+            nombre: 'Carlos',
+            apellidos: 'Mendoza',
             dni: '12345678',
             direccion: 'Lima',
             telefono: '999999999',
-            email: 'juan@norteexpreso.com',
+            email: 'carlos@norteexpreso.com',
             cargo: 'Chofer',
             area: 'Operaciones'
           },
@@ -54,75 +65,106 @@ export function SearchResultsPage() {
         },
         {
           codigo: 2,
-          fecha_hora_salida: `${filters.fecha}T14:00:00`,
-          fecha_hora_llegada_estimada: `${filters.fecha}T22:00:00`,
+          fecha_hora_salida: `${filters.fecha}T10:00:00`,
+          fecha_hora_llegada_estimada: `${filters.fecha}T${String(10 + routeData.duracion_horas).padStart(2, '0')}:00:00`,
           estado: 'Programado',
           ruta: {
-            codigo: 2,
+            codigo: routeData.codigo,
             origen: filters.origen,
             destino: filters.destino,
-            costo_referencial: 50.00
+            costo_referencial: selectedPromotion ? selectedPromotion.discountedPrice : routeData.costo_referencial + 5
           },
           bus: {
             codigo: 2,
-            placa: 'DEF-456',
+            placa: 'NTE-002',
             fabricante: 'Scania',
             num_asientos: 44,
             estado: 'Operativo'
           },
           chofer: {
             codigo: 2,
-            nombre: 'Carlos',
-            apellidos: 'García',
+            nombre: 'Miguel',
+            apellidos: 'Torres',
             dni: '87654321',
             direccion: 'Lima',
             telefono: '888888888',
-            email: 'carlos@norteexpreso.com',
+            email: 'miguel@norteexpreso.com',
             cargo: 'Chofer',
             area: 'Operaciones'
           },
-          asientos_disponibles: 20
+          asientos_disponibles: 28
         },
         {
           codigo: 3,
-          fecha_hora_salida: `${filters.fecha}T20:00:00`,
-          fecha_hora_llegada_estimada: `${new Date(new Date(filters.fecha).getTime() + 24*60*60*1000).toISOString().split('T')[0]}T04:00:00`,
+          fecha_hora_salida: `${filters.fecha}T15:00:00`,
+          fecha_hora_llegada_estimada: `${filters.fecha}T${String(15 + routeData.duracion_horas).padStart(2, '0')}:00:00`,
           estado: 'Programado',
           ruta: {
-            codigo: 3,
+            codigo: routeData.codigo,
             origen: filters.origen,
             destino: filters.destino,
-            costo_referencial: 42.00
+            costo_referencial: selectedPromotion ? selectedPromotion.discountedPrice : routeData.costo_referencial - 3
           },
           bus: {
             codigo: 3,
-            placa: 'GHI-789',
+            placa: 'NTE-003',
             fabricante: 'Volvo',
             num_asientos: 36,
             estado: 'Operativo'
           },
           chofer: {
             codigo: 3,
-            nombre: 'Miguel',
-            apellidos: 'Torres',
+            nombre: 'Luis',
+            apellidos: 'García',
             dni: '11223344',
             direccion: 'Lima',
             telefono: '777777777',
-            email: 'miguel@norteexpreso.com',
+            email: 'luis@norteexpreso.com',
             cargo: 'Chofer',
             area: 'Operaciones'
           },
-          asientos_disponibles: 28
+          asientos_disponibles: 22
+        },
+        {
+          codigo: 4,
+          fecha_hora_salida: `${filters.fecha}T20:00:00`,
+          fecha_hora_llegada_estimada: `${new Date(new Date(filters.fecha).getTime() + 24*60*60*1000).toISOString().split('T')[0]}T${String(20 + routeData.duracion_horas - 24).padStart(2, '0')}:00:00`,
+          estado: 'Programado',
+          ruta: {
+            codigo: routeData.codigo,
+            origen: filters.origen,
+            destino: filters.destino,
+            costo_referencial: selectedPromotion ? selectedPromotion.discountedPrice : routeData.costo_referencial + 2
+          },
+          bus: {
+            codigo: 4,
+            placa: 'NTE-004',
+            fabricante: 'Mercedes Benz',
+            num_asientos: 42,
+            estado: 'Operativo'
+          },
+          chofer: {
+            codigo: 4,
+            nombre: 'Roberto',
+            apellidos: 'Silva',
+            dni: '55667788',
+            direccion: 'Lima',
+            telefono: '666666666',
+            email: 'roberto@norteexpreso.com',
+            cargo: 'Chofer',
+            area: 'Operaciones'
+          },
+          asientos_disponibles: 18
         }
       ];
       
       setViajes(mockViajes);
       setLoading(false);
     }, 1000);
-  }, [filters, navigate]);
+  }, [filters, navigate, selectedPromotion]);
 
   const handleSelectViaje = (viaje: Viaje) => {
-    navigate('/booking', { state: { viaje, filters } });
+    navigate('/booking', { state: { viaje, filters, selectedPromotion } });
   };
 
   const formatTime = (datetime: string) => {
@@ -136,6 +178,15 @@ export function SearchResultsPage() {
     return `${diffHours}h`;
   };
 
+  const getBusFeatures = (fabricante: string) => {
+    const features = {
+      'Mercedes Benz': ['WiFi Premium', 'Asientos Reclinables', 'Aire Acondicionado', 'Entretenimiento'],
+      'Scania': ['WiFi Gratis', 'Asientos Cómodos', 'Baño a Bordo', 'Snack Incluido'],
+      'Volvo': ['WiFi Ultra', 'Asientos Premium', 'Climatización', 'Servicio VIP']
+    };
+    return features[fabricante as keyof typeof features] || ['WiFi', 'Comodidad', 'Seguridad'];
+  };
+
   if (!filters) {
     return null;
   }
@@ -143,7 +194,7 @@ export function SearchResultsPage() {
   return (
     <div className="min-h-screen bg-blanco-crema py-8">
       <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -154,6 +205,12 @@ export function SearchResultsPage() {
                 <p className="text-gris-suave">
                   {format(new Date(filters.fecha), 'EEEE, d MMMM yyyy', { locale: es })} • {filters.pasajeros} {filters.pasajeros === 1 ? 'pasajero' : 'pasajeros'}
                 </p>
+                {selectedPromotion && (
+                  <div className="mt-2 inline-flex items-center bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
+                    <Gift className="h-4 w-4 mr-1" />
+                    Promoción aplicada: {selectedPromotion.title}
+                  </div>
+                )}
               </div>
               <button
                 onClick={() => navigate('/search')}
@@ -168,12 +225,12 @@ export function SearchResultsPage() {
           {loading && (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-azul-oscuro mx-auto mb-4"></div>
-              <p className="text-gris-suave">Buscando viajes disponibles...</p>
+              <p className="text-gris-suave">Buscando los mejores viajes al norte...</p>
             </div>
           )}
 
           {/* Results */}
-          {!loading && (
+          {!loading && viajes.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-azul-oscuro">
@@ -186,13 +243,13 @@ export function SearchResultsPage() {
                 </select>
               </div>
 
-              {viajes.map((viaje) => (
+              {viajes.map((viaje, index) => (
                 <div key={viaje.codigo} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow">
                   <div className="p-6">
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-center">
                       {/* Horarios */}
                       <div className="lg:col-span-2">
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-4 mb-4">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-azul-oscuro">
                               {formatTime(viaje.fecha_hora_salida)}
@@ -220,26 +277,59 @@ export function SearchResultsPage() {
                           </div>
                         </div>
                         
-                        <div className="mt-4 flex items-center space-x-4 text-sm text-gris-suave">
+                        <div className="flex items-center justify-between text-sm text-gris-suave mb-3">
                           <div className="flex items-center">
                             <MapPin className="h-4 w-4 mr-1" />
-                            {viaje.bus.fabricante}
+                            {viaje.bus.fabricante} - {viaje.bus.placa}
                           </div>
                           <div className="flex items-center">
                             <Users className="h-4 w-4 mr-1" />
                             {viaje.asientos_disponibles} asientos disponibles
                           </div>
                         </div>
+
+                        {/* Bus Features */}
+                        <div className="flex flex-wrap gap-2">
+                          {getBusFeatures(viaje.bus.fabricante).map((feature, i) => (
+                            <span key={i} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                              ✓ {feature}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Promotion indicator */}
+                        {selectedPromotion && index === 0 && (
+                          <div className="mt-3 flex items-center text-sm text-red-600">
+                            <Gift className="h-4 w-4 mr-1" />
+                            Precio promocional aplicado
+                          </div>
+                        )}
                       </div>
 
                       {/* Precio */}
                       <div className="text-center lg:text-right">
-                        <div className="text-3xl font-bold text-azul-oscuro mb-1">
-                          S/ {viaje.ruta.costo_referencial.toFixed(2)}
-                        </div>
-                        <div className="text-sm text-gris-suave">
-                          por pasajero
-                        </div>
+                        {selectedPromotion && index === 0 ? (
+                          <div>
+                            <div className="text-sm text-gray-500 line-through">
+                              S/ {selectedPromotion.originalPrice.toFixed(2)}
+                            </div>
+                            <div className="text-3xl font-bold text-red-600 mb-1">
+                              S/ {viaje.ruta.costo_referencial.toFixed(2)}
+                            </div>
+                            <div className="text-sm bg-red-100 text-red-800 px-2 py-1 rounded-full inline-block">
+                              -{selectedPromotion.discount}% OFF
+                            </div>
+                          </div>
+                        ) : (
+                          <div>
+                            <div className="text-3xl font-bold text-azul-oscuro mb-1">
+                              S/ {viaje.ruta.costo_referencial.toFixed(2)}
+                            </div>
+                            <div className="text-sm text-gris-suave">
+                              por pasajero
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {/* Botón */}
@@ -268,13 +358,66 @@ export function SearchResultsPage() {
               </h3>
               <p className="text-gris-suave mb-6">
                 No encontramos viajes para esta ruta en la fecha seleccionada.
+                Intenta con otra fecha o revisa nuestras promociones especiales.
               </p>
-              <button
-                onClick={() => navigate('/search')}
-                className="bg-azul-oscuro text-white px-6 py-3 rounded-lg hover:bg-primary-600 transition-colors"
-              >
-                Buscar otras fechas
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => navigate('/search')}
+                  className="bg-azul-oscuro text-white px-6 py-3 rounded-lg hover:bg-primary-600 transition-colors"
+                >
+                  Buscar otras fechas
+                </button>
+                <button
+                  onClick={() => navigate('/promotions')}
+                  className="border border-azul-oscuro text-azul-oscuro px-6 py-3 rounded-lg hover:bg-azul-oscuro hover:text-white transition-colors"
+                >
+                  Ver Promociones
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Route Information */}
+          {!loading && viajes.length > 0 && (
+            <div className="mt-8 bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-azul-oscuro mb-4">
+                Información de la Ruta
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-amarillo-dorado mb-2">
+                    {getRouteByOriginDestination(filters.origen, filters.destino)?.distancia_km} km
+                  </div>
+                  <div className="text-sm text-gris-suave">Distancia total</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-amarillo-dorado mb-2">
+                    ~{getRouteByOriginDestination(filters.origen, filters.destino)?.duracion_horas}h
+                  </div>
+                  <div className="text-sm text-gris-suave">Duración promedio</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-amarillo-dorado mb-2">
+                    4.8★
+                  </div>
+                  <div className="text-sm text-gris-suave">Calificación de ruta</div>
+                </div>
+              </div>
+              
+              {getRouteByOriginDestination(filters.origen, filters.destino)?.atractivos && (
+                <div className="mt-6">
+                  <h4 className="font-semibold text-azul-oscuro mb-3">
+                    Atractivos en {filters.destino}:
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {getRouteByOriginDestination(filters.origen, filters.destino)?.atractivos.map((atractivo, index) => (
+                      <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                        📍 {atractivo}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

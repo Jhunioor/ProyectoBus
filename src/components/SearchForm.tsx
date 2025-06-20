@@ -15,9 +15,10 @@ export function SearchForm({ onSearch, className = '' }: SearchFormProps) {
     pasajeros: 1
   });
 
-  const ciudades = [
-    'Lima', 'Arequipa', 'Trujillo', 'Chiclayo', 'Piura', 'Iquitos', 
-    'Cusco', 'Huancayo', 'Tacna', 'Ica', 'Chimbote', 'Cajamarca'
+  // Ciudades del norte del Perú
+  const ciudadesNorte = [
+    'Lima', 'Trujillo', 'Chiclayo', 'Piura', 'Cajamarca', 'Tumbes', 
+    'Chimbote', 'Sullana', 'Talara', 'Paita', 'Lambayeque', 'Ferreñafe'
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,6 +30,11 @@ export function SearchForm({ onSearch, className = '' }: SearchFormProps) {
 
   const handleInputChange = (field: keyof SearchFilters, value: string | number) => {
     setFilters(prev => ({ ...prev, [field]: value }));
+  };
+
+  const getAvailableDestinations = () => {
+    if (!filters.origen) return ciudadesNorte;
+    return ciudadesNorte.filter(ciudad => ciudad !== filters.origen);
   };
 
   return (
@@ -47,7 +53,7 @@ export function SearchForm({ onSearch, className = '' }: SearchFormProps) {
             required
           >
             <option value="">Seleccionar ciudad</option>
-            {ciudades.map(ciudad => (
+            {ciudadesNorte.map(ciudad => (
               <option key={ciudad} value={ciudad}>{ciudad}</option>
             ))}
           </select>
@@ -66,7 +72,7 @@ export function SearchForm({ onSearch, className = '' }: SearchFormProps) {
             required
           >
             <option value="">Seleccionar ciudad</option>
-            {ciudades.filter(ciudad => ciudad !== filters.origen).map(ciudad => (
+            {getAvailableDestinations().map(ciudad => (
               <option key={ciudad} value={ciudad}>{ciudad}</option>
             ))}
           </select>
@@ -115,6 +121,32 @@ export function SearchForm({ onSearch, className = '' }: SearchFormProps) {
             <span>Buscar</span>
           </button>
         </div>
+      </div>
+
+      {/* Quick suggestions */}
+      <div className="mt-4 flex flex-wrap gap-2">
+        <span className="text-sm text-gris-suave">Rutas populares:</span>
+        {[
+          { origen: 'Lima', destino: 'Trujillo' },
+          { origen: 'Lima', destino: 'Chiclayo' },
+          { origen: 'Lima', destino: 'Piura' }
+        ].map((route, index) => (
+          <button
+            key={index}
+            type="button"
+            onClick={() => {
+              setFilters(prev => ({
+                ...prev,
+                origen: route.origen,
+                destino: route.destino,
+                fecha: prev.fecha || new Date().toISOString().split('T')[0]
+              }));
+            }}
+            className="text-sm bg-azul-oscuro/10 text-azul-oscuro px-3 py-1 rounded-full hover:bg-azul-oscuro/20 transition-colors"
+          >
+            {route.origen} → {route.destino}
+          </button>
+        ))}
       </div>
     </form>
   );
